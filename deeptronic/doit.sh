@@ -1,0 +1,4 @@
+#!/bin/bash
+
+./setstraight.py
+
