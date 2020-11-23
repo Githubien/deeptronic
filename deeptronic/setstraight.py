@@ -23,7 +23,7 @@ class ImgProcessor:
 		self.extract_lines()
 		a=self.fit_lines()
 		print(a)
-		omg=transform.rotate(self.img0,math.degrees(-a))
+		omg=transform.rotate(self.img0,a)
 		if (self.debug): self.display(self.img0,omg)
 		io.imsave(os.path.join("out1", self.filename),omg)
 		
@@ -45,26 +45,27 @@ class ImgProcessor:
 		for line in self.lines:
 			x=line[1][0]-line[0][0]
 			y=line[1][1]-line[0][1]
-			a=math.atan2(y,x)
-			if (a<0): a=math.pi+a
+			a=math.degrees(math.atan2(y,x))
+			#if (a<0): a=math.pi+a
 			angles.append(a)
 		(n, b) = np.histogram(angles, bins = 100)
 		bin_max = np.where(n == n.max())[0][0]
 		amax=b[bin_max]
 		angles2=[]
 		for a in angles:
-			if (abs(a-amax)<math.pi/16):
+			if (abs(a-amax)<10):
 				angles2.append(a)
-			elif (abs(a+math.pi-amax)<math.pi/16):
-				angles2.append(a+math.pi)
+			elif (abs(a+180-amax)<10):
+				angles2.append(a+180)
 		_, bins, _ = plt.hist(angles2, bins = 250)
 		
 		mu, sigma = scipy.stats.norm.fit(angles2)
 		best_fit_line = scipy.stats.norm.pdf(bins, mu, sigma)
 		plt.plot(bins, best_fit_line)
 		plt.show()
-		if (mu>(math.pi*2/3)):
-			mu=math.pi-mu
+		#if (mu>(math.pi*2/3)):
+		#	mu=math.pi-mu
+		# 2.58°
 		return mu
 		
 		
